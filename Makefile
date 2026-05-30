@@ -487,9 +487,9 @@ pro8_isp: isp
 atmega328_pro8: TARGET = atmega328_pro_8MHz
 atmega328_pro8: CHIP = atmega328
 atmega328_pro8:
-	$(MAKE) $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=3
-	mv $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
-	mv $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
+	$(MAKE) $(CHIP) AVR_FREQ=8000000L LED_START_FLASHES=0
+	copy $(PROGRAM)_$(CHIP).hex $(PROGRAM)_$(TARGET).hex
+	copy $(PROGRAM)_$(CHIP).lst $(PROGRAM)_$(TARGET).lst
 
 atmega328_pro8_isp: atmega328_pro8
 atmega328_pro8_isp: TARGET = atmega328_pro_8MHz

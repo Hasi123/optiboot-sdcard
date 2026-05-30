@@ -1098,20 +1098,28 @@ int sdcard_loader(void) {
 
 	/* next read data word */
 	stepBytesRemaining = 4;
+
+	if( hexNumber != 0x00 ) {
+	  // Not a data record (e.g. 0x02 Extended Segment, 0x03 Start Segment,
+	  // 0x04 Extended Linear, 0x05 Start Linear) - skip writing to flash
+	  lineWords = 0;
+	}
       }
 
       else { //hexReadStep == READ_DATA
 
-	/* if needed prepare flash page */
-	if( pageAddress == pageBaseAddress ) {
-	  __boot_page_erase_short(pageBaseAddress);
-	  boot_spm_busy_wait();
-	}
+	if( lineWords ) {
+	  /* if needed prepare flash page */
+	  if( pageAddress == pageBaseAddress ) {
+	    __boot_page_erase_short(pageBaseAddress);
+	    boot_spm_busy_wait();
+	  }
 
-	/* write a new word */
-	__boot_page_fill_short(pageAddress, hexNumber);
-	pageAddress += 2;
-	lineWords--;
+	  /* write a new word */
+	  __boot_page_fill_short(pageAddress, hexNumber);
+	  pageAddress += 2;
+	  lineWords--;
+	}
 
 	/* check if we need to change page */
 	if( pageAddress - pageBaseAddress >= SPM_PAGESIZE ) {
