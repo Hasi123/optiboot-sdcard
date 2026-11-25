@@ -102,11 +102,12 @@ uint8_t cardCommand(uint8_t cmd, uint32_t arg) {
   // send command
   SPI_transfer(cmd | 0x40);
 
-  // send argument
-  uint8_t *pa = reinterpret_cast<uint8_t *>(&arg);
-  for (int8_t i = 3; i >= 0; i--) {
-    SPI_transfer(pa[i]);
-  }
+  // send argument, MSB first (shifts keep arg in registers; taking &arg
+  // forces newer gcc to spill it to the stack, costing ~40 bytes)
+  SPI_transfer(arg >> 24);
+  SPI_transfer(arg >> 16);
+  SPI_transfer(arg >> 8);
+  SPI_transfer(arg);
 
   // send CRC - correct for CMD0 with arg zero or CMD8 with arg 0X1AA
   SPI_transfer(cmd == CMD0 ? 0X95 : 0X87);
